@@ -113,3 +113,41 @@ if hasattr(clf, "feature_importances_"):
     plt.close()
 
 print(f"🖼️ Plots saved to {plot_path}")
+
+# ========== LEARNING CURVE UPDATE ========== #
+def update_learning_curve(models_dir="models", output_path="plots/learning_curve.png"):
+    versions = sorted([
+        d for d in os.listdir(models_dir)
+        if d.startswith("v") and os.path.isdir(os.path.join(models_dir, d))
+    ], key=lambda v: int(v[1:]))
+
+    scores = []
+    labels = []
+
+    for v in versions:
+        cfg_path = os.path.join(models_dir, v, "config.json")
+        if os.path.exists(cfg_path):
+            with open(cfg_path, "r") as f:
+                cfg = json.load(f)
+            score = cfg.get("f1_macro")
+            if score is not None:
+                labels.append(v)
+                scores.append(score)
+
+    if scores:
+        plt.figure(figsize=(10, 5))
+        plt.plot(labels, scores, marker='o', linestyle='-', color='blue')
+        plt.title("Learning Curve (F1 Macro Score)")
+        plt.xlabel("Model Version")
+        plt.ylabel("F1 Macro Score")
+        plt.ylim(0, 1.05)
+        plt.grid(True)
+        plt.tight_layout()
+        plt.savefig(output_path)
+        plt.close()
+        print(f"📈 Learning curve updated: {output_path}")
+    else:
+        print("⚠️ No valid training scores found to plot.")
+
+# Run the updater at the end of training
+update_learning_curve()
