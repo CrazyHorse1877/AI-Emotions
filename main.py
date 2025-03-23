@@ -46,6 +46,7 @@ def draw_message_log(screen, message):
         text_rect = text_surface.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 30))
         screen.blit(text_surface, text_rect)
 
+debug_mode = True
 def main():
     global message_log, message_timer
     agent = Agent()
@@ -60,7 +61,8 @@ def main():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_s:
                     agent.save_action_log("agent_log.json")
-
+            elif event.key == pygame.K_d:
+                debug_mode = not debug_mode
 
         screen.fill(BG_COLOUR)
 

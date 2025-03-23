@@ -198,7 +198,7 @@ class Agent:
 
     def draw(self, screen, font):
         pygame.draw.circle(screen, self.colour, (int(self.x), int(self.y)), self.radius)
-        label = font.render(self.emotion, True, (255, 255, 255))
+        label = font.render(f"{self.emotion} / {self.action}", True, (255, 255, 255))
         screen.blit(label, (self.x - 20, self.y - 25))
 
         # Health bar
