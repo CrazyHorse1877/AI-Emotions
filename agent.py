@@ -192,6 +192,11 @@ class Agent:
         self.x = max(self.radius, min(SCREEN_WIDTH - self.radius, self.x))
         self.y = max(self.radius, min(SCREEN_HEIGHT - self.radius, self.y))
 
+        # Target tracking
+        self.current_target = nearest_prey if self.action == "seek_food" else None
+        if self.action == "flee":
+            self.current_target = closest  # predator object
+
 
         # Colour
         self.colour = EMOTION_COLOURS.get(self.emotion, TURTLE_COLOUR)
@@ -208,6 +213,13 @@ class Agent:
         colour = (0, 255, 0) if self.health > 40 else (255, 165, 0) if self.health > 20 else (255, 0, 0)
         bar_x = self.x - bar_width // 2
         bar_y = self.y + self.radius + 6
+
+        # Draw target line in debug mode
+        if hasattr(self, "current_target") and self.current_target:
+            start = (int(self.x), int(self.y))
+            end = (int(self.current_target.x), int(self.current_target.y))
+            pygame.draw.line(screen, (200, 200, 255), start, end, 1)
+
         pygame.draw.rect(screen, (50, 50, 50), (bar_x, bar_y, bar_width, bar_height))
         pygame.draw.rect(screen, colour, (bar_x, bar_y, int(bar_width * health_ratio), bar_height))
 
