@@ -188,6 +188,10 @@ class Agent:
         # Move
         self.x += self.direction.x * self.speed
         self.y += self.direction.y * self.speed
+        
+        self.x = max(self.radius, min(SCREEN_WIDTH - self.radius, self.x))
+        self.y = max(self.radius, min(SCREEN_HEIGHT - self.radius, self.y))
+
 
         # Colour
         self.colour = EMOTION_COLOURS.get(self.emotion, TURTLE_COLOUR)

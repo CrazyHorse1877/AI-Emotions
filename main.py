@@ -71,7 +71,7 @@ def main():
 
         # Update and draw predators
         for predator in predator_list:
-            predator.update(prey_list)
+            predator.update(prey_list, predator_list)
             predator.draw(screen)
 
         # Predator eats prey on contact
