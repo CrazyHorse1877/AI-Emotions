@@ -2,6 +2,7 @@ import pygame
 import random
 from settings import *
 from emotion_engine import evaluate_emotion
+from policy_engine import evaluate_policy
 
 class Agent:
     def __init__(self):
@@ -21,6 +22,7 @@ class Agent:
         self.direction = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize()
         self.speed = 0
         self.emotion = "Idle"
+        self.action = "idle"
 
         # Tracking
         self.prev_emotion = "Idle"
@@ -40,7 +42,6 @@ class Agent:
         else:
             self.energy += 0.1
         self.energy = max(0, min(100, self.energy))
-
         self.stimulation = max(0, self.stimulation - 0.05)
         if self.energy <= 0:
             self.health -= 0.1
@@ -51,12 +52,14 @@ class Agent:
             return
 
         # Predator proximity triggers fear
+        predators_nearby = False
         for predator in predator_list:
             if pygame.Vector2(self.x, self.y).distance_to(predator.get_position()) < 100:
                 self.fear_level = 100
+                predators_nearby = True
                 break
 
-        # Emotion via engine
+        # --- AI Decision ---
         state = {
             "hunger": self.hunger,
             "energy": self.energy,
@@ -65,9 +68,12 @@ class Agent:
             "fear_level": self.fear_level
         }
         context = {
-            "novelty_trigger": random.random() < 0.005
+            "novelty_trigger": random.random() < 0.005,
+            "prey_visible": bool(prey_list),
+            "predators_nearby": predators_nearby
         }
 
+        # Step 1: Feel
         new_emotion = evaluate_emotion(state, context)
         if new_emotion != self.prev_emotion:
             self.emotion_log.append({
@@ -79,44 +85,42 @@ class Agent:
             self.prev_emotion = new_emotion
         self.emotion = new_emotion
 
-        # Set speed
+        # Step 2: Decide
+        self.action = evaluate_policy(state, context)
+
+        # Step 3: Act
         self.speed = {
-            "Dead": 0,
-            "Fearful": 2.5,
-            "Hungry": 2,
-            "Exhausted": 0.2,
-            "Bored": 0.5,
-            "Curious": 1,
-            "Idle": 0
-        }.get(self.emotion, 1)
+            "flee": 2.5,
+            "seek_food": 2,
+            "rest": 0,
+            "wander": 1,
+            "idle": 0,
+            "do_nothing": 0
+        }.get(self.action, 1)
 
-        # Update colour
-        self.colour = EMOTION_COLOURS.get(self.emotion, TURTLE_COLOUR)
-
-        # Behavioural direction
-        if self.emotion == "Hungry" and prey_list:
+        if self.action == "seek_food" and prey_list:
             closest = min(prey_list, key=lambda p: pygame.Vector2(self.x, self.y).distance_to(p.get_position()))
             self.direction = (closest.get_position() - pygame.Vector2(self.x, self.y)).normalize()
 
-        elif self.emotion == "Fearful" and predator_list:
+        elif self.action == "flee" and predator_list:
             closest = min(predator_list, key=lambda p: pygame.Vector2(self.x, self.y).distance_to(p.get_position()))
             away = pygame.Vector2(self.x, self.y) - closest.get_position()
             if away.length() > 0:
                 self.direction = away.normalize()
 
-        elif self.emotion == "Curious" and random.random() < 0.05:
+        elif self.action == "wander" and random.random() < 0.05:
             self.direction = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize()
 
-        elif self.emotion in ["Idle", "Sad"] and random.random() < 0.01:
+        elif self.action in ["idle", "rest"] and random.random() < 0.01:
             self.direction = pygame.Vector2(random.uniform(-1, 1), random.uniform(-1, 1)).normalize()
 
-        # Boundary collisions
+        # Clamp to bounds
         if self.x <= self.radius or self.x >= SCREEN_WIDTH - self.radius:
             self.direction.x *= -1
         if self.y <= self.radius or self.y >= SCREEN_HEIGHT - self.radius:
             self.direction.y *= -1
 
-        # Eat prey
+        # Eat prey if close
         for prey in prey_list[:]:
             if pygame.Vector2(self.x, self.y).distance_to(prey.get_position()) < self.radius + prey.radius:
                 if self.hunger >= 50:
@@ -126,7 +130,7 @@ class Agent:
                     self.energy = min(100, self.energy + 10)
                     break
 
-        # Predator collision damage
+        # Predator damage
         for predator in predator_list:
             if pygame.Vector2(self.x, self.y).distance_to(predator.get_position()) < self.radius + predator.radius:
                 self.health -= 0.5
@@ -136,6 +140,9 @@ class Agent:
         # Move
         self.x += self.direction.x * self.speed
         self.y += self.direction.y * self.speed
+
+        # Update colour
+        self.colour = EMOTION_COLOURS.get(self.emotion, TURTLE_COLOUR)
 
     def draw(self, screen, font):
         pygame.draw.circle(screen, self.colour, (int(self.x), int(self.y)), self.radius)
