@@ -57,6 +57,10 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    agent.save_action_log("agent_log.json")
+
 
         screen.fill(BG_COLOUR)
 
