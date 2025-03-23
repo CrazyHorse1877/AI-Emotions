@@ -151,3 +151,80 @@ def update_learning_curve(models_dir="models", output_path="plots/learning_curve
 
 # Run the updater at the end of training
 update_learning_curve()
+
+# ========== DASHBOARD ========== #
+def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dashboard.html"):
+    versions = sorted([
+        d for d in os.listdir(models_dir)
+        if d.startswith("v") and os.path.isdir(os.path.join(models_dir, d))
+    ], key=lambda v: int(v[1:]))
+
+    rows = []
+    for v in versions:
+        config_path = os.path.join(models_dir, v, "config.json")
+        if not os.path.exists(config_path):
+            continue
+
+        with open(config_path, "r") as f:
+            cfg = json.load(f)
+
+        f1 = cfg.get("f1_macro", "?")
+        timestamp = cfg.get("timestamp", "unknown")
+
+        reward_plot = f"{plots_dir}/{v}/reward_distribution.png"
+        action_plot = f"{plots_dir}/{v}/action_distribution.png"
+        feature_plot = f"{plots_dir}/{v}/feature_importance.png"
+
+        row = f"""
+        <tr>
+            <td>{v}</td>
+            <td>{f1:.3f}</td>
+            <td>{timestamp}</td>
+            <td><img src="{reward_plot}" width="200"></td>
+            <td><img src="{action_plot}" width="200"></td>
+            <td><img src="{feature_plot}" width="200"></td>
+        </tr>
+        """
+        rows.append(row)
+
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>AI Agent Training Dashboard</title>
+        <style>
+            body {{ font-family: Arial; padding: 20px; background: #111; color: #eee; }}
+            table {{ border-collapse: collapse; width: 100%; }}
+            th, td {{ border: 1px solid #444; padding: 8px; text-align: center; }}
+            th {{ background-color: #222; }}
+            img {{ border-radius: 4px; box-shadow: 0 0 5px rgba(255,255,255,0.1); }}
+        </style>
+    </head>
+    <body>
+        <h1>AI Emotions Simulator — Training Dashboard</h1>
+        <p>Versioned model summaries with visualisation of rewards, actions, and features.</p>
+        <table>
+            <tr>
+                <th>Version</th>
+                <th>F1 Macro</th>
+                <th>Trained</th>
+                <th>Rewards</th>
+                <th>Actions</th>
+                <th>Feature Importance</th>
+            </tr>
+            {''.join(rows)}
+        </table>
+        <br>
+        <h3>Learning Curve</h3>
+        <img src="plots/learning_curve.png" width="600">
+    </body>
+    </html>
+    """
+
+    with open(output_file, "w") as f:
+        f.write(html)
+
+    print(f"📊 Dashboard generated at: {output_file}")
+
+# Run dashboard update
+generate_dashboard()
