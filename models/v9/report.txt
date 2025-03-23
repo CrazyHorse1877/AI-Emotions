@@ -1,0 +1,11 @@
+              precision    recall  f1-score   support
+
+        flee       1.00      1.00      1.00         5
+        idle       1.00      1.00      1.00       272
+        rest       1.00      1.00      1.00         1
+   seek_food       1.00      1.00      1.00       260
+      wander       0.00      0.00      0.00         1
+
+    accuracy                           1.00       539
+   macro avg       0.80      0.80      0.80       539
+weighted avg       1.00      1.00      1.00       539

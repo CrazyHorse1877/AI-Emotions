@@ -9,11 +9,21 @@
             th, td { border: 1px solid #444; padding: 8px; text-align: center; }
             th { background-color: #222; }
             img { border-radius: 4px; box-shadow: 0 0 5px rgba(255,255,255,0.1); }
+            .config-row { background: #1a1a1a; }
+            .config-row td { padding: 12px; text-align: left; font-size: 14px; }
+            tr:hover { background-color: #222; cursor: pointer; }
         </style>
+        <script>
+            function toggle(row) {
+                let next = row.nextElementSibling;
+                let block = next.querySelector(".details");
+                block.style.display = block.style.display === "none" ? "block" : "none";
+            }
+        </script>
     </head>
     <body>
         <h1>AI Emotions Simulator — Training Dashboard</h1>
-        <p>Versioned model summaries with visualisation of rewards, actions, and features.</p>
+        <p>Click a row to expand model config.</p>
         <table>
             <tr>
                 <th>Version</th>
@@ -21,10 +31,10 @@
                 <th>Trained</th>
                 <th>Rewards</th>
                 <th>Actions</th>
-                <th>Feature Importance</th>
+                <th>Features</th>
             </tr>
             
-        <tr>
+        <tr onclick="toggle(this)">
             <td>v2</td>
             <td>0.799</td>
             <td>2025-03-24T01:56:35.410883</td>
@@ -32,8 +42,18 @@
             <td><img src="plots/v2/action_distribution.png" width="200"></td>
             <td><img src="plots/v2/feature_importance.png" width="200"></td>
         </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
         
-        <tr>
+        <tr onclick="toggle(this)">
             <td>v3</td>
             <td>0.799</td>
             <td>2025-03-24T01:58:14.318344</td>
@@ -41,8 +61,18 @@
             <td><img src="plots/v3/action_distribution.png" width="200"></td>
             <td><img src="plots/v3/feature_importance.png" width="200"></td>
         </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
         
-        <tr>
+        <tr onclick="toggle(this)">
             <td>v4</td>
             <td>0.799</td>
             <td>2025-03-24T02:03:44.293526</td>
@@ -50,14 +80,129 @@
             <td><img src="plots/v4/action_distribution.png" width="200"></td>
             <td><img src="plots/v4/feature_importance.png" width="200"></td>
         </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
         
-        <tr>
+        <tr onclick="toggle(this)">
             <td>v5</td>
             <td>0.799</td>
             <td>2025-03-24T02:07:13.361386</td>
             <td><img src="plots/v5/reward_distribution.png" width="200"></td>
             <td><img src="plots/v5/action_distribution.png" width="200"></td>
             <td><img src="plots/v5/feature_importance.png" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
+        
+        <tr onclick="toggle(this)">
+            <td>v6</td>
+            <td>0.799</td>
+            <td>2025-03-24T02:13:32.619278</td>
+            <td><img src="plots/v6/reward_distribution.png" width="200"></td>
+            <td><img src="plots/v6/action_distribution.png" width="200"></td>
+            <td><img src="plots/v6/feature_importance.png" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
+        
+        <tr onclick="toggle(this)">
+            <td>v7</td>
+            <td>0.799</td>
+            <td>2025-03-24T02:13:59.777469</td>
+            <td><img src="plots/v7/reward_distribution.png" width="200"></td>
+            <td><img src="plots/v7/action_distribution.png" width="200"></td>
+            <td><img src="plots/v7/feature_importance.png" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
+        
+        <tr onclick="toggle(this)">
+            <td>v8</td>
+            <td>0.799</td>
+            <td>2025-03-24T03:20:30.783544</td>
+            <td><img src="plots/v8/reward_distribution.png" width="200"></td>
+            <td><img src="plots/v8/action_distribution.png" width="200"></td>
+            <td><img src="plots/v8/feature_importance.png" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
+        
+        <tr onclick="toggle(this)">
+            <td>v9</td>
+            <td>0.799</td>
+            <td>2025-03-24T03:25:35.480025</td>
+            <td><img src="plots/v9/reward_distribution.png" width="200"></td>
+            <td><img src="plots/v9/action_distribution.png" width="200"></td>
+            <td><img src="plots/v9/feature_importance.png" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
+        </tr>
+        
+        <tr onclick="toggle(this)">
+            <td>v10</td>
+            <td>0.799</td>
+            <td>2025-03-24T03:26:46.044389</td>
+            <td><img src="plots/v10/reward_distribution.png" width="200"></td>
+            <td><img src="plots/v10/action_distribution.png" width="200"></td>
+            <td><img src="plots/v10/feature_importance.png" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">
+        <div class="details" style="display:none">
+            <b>Model:</b> DecisionTree<br>
+            <b>Max Depth:</b> 5<br>
+            <b>Trained On:</b> 2692 samples<br>
+            <b>Features:</b> hunger, energy, health, stimulation, fear_level
+        </div>
+        </td>
         </tr>
         
         </table>

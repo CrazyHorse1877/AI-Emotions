@@ -1,0 +1,15 @@
+{
+  "model_type": "DecisionTree",
+  "max_depth": 5,
+  "test_split": 0.2,
+  "trained_on": 2692,
+  "features": [
+    "hunger",
+    "energy",
+    "health",
+    "stimulation",
+    "fear_level"
+  ],
+  "timestamp": "2025-03-24T03:26:46.044389",
+  "f1_macro": 0.7992647058823529
+}

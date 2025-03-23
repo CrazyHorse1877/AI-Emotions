@@ -252,3 +252,9 @@ def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dash
         f.write(html)
 
     print(f"📊 Dashboard updated at: {output_file}")
+    
+    # Run the updater at the end of training
+
+update_learning_curve()
+generate_dashboard()
+
