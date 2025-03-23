@@ -162,6 +162,11 @@ def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dash
     rows = []
     for v in versions:
         config_path = os.path.join(models_dir, v, "config.json")
+        reward_plot = f"{plots_dir}/{v}/reward_distribution.png"
+        action_plot = f"{plots_dir}/{v}/action_distribution.png"
+        feature_plot = f"{plots_dir}/{v}/feature_importance.png"
+        rewards_path = os.path.join(models_dir, v, "report.txt")
+
         if not os.path.exists(config_path):
             continue
 
@@ -170,19 +175,31 @@ def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dash
 
         f1 = cfg.get("f1_macro", "?")
         timestamp = cfg.get("timestamp", "unknown")
+        features = ", ".join(cfg.get("features", []))
+        model_type = cfg.get("model_type", "?")
+        depth = cfg.get("max_depth", "?")
+        trained_on = cfg.get("trained_on", "?")
 
-        reward_plot = f"{plots_dir}/{v}/reward_distribution.png"
-        action_plot = f"{plots_dir}/{v}/action_distribution.png"
-        feature_plot = f"{plots_dir}/{v}/feature_importance.png"
+        config_block = f"""
+        <div class="details" style="display:none">
+            <b>Model:</b> {model_type}<br>
+            <b>Max Depth:</b> {depth}<br>
+            <b>Trained On:</b> {trained_on} samples<br>
+            <b>Features:</b> {features}
+        </div>
+        """
 
         row = f"""
-        <tr>
+        <tr onclick="toggle(this)">
             <td>{v}</td>
             <td>{f1:.3f}</td>
             <td>{timestamp}</td>
             <td><img src="{reward_plot}" width="200"></td>
             <td><img src="{action_plot}" width="200"></td>
             <td><img src="{feature_plot}" width="200"></td>
+        </tr>
+        <tr class="config-row">
+            <td colspan="6">{config_block}</td>
         </tr>
         """
         rows.append(row)
@@ -198,11 +215,21 @@ def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dash
             th, td {{ border: 1px solid #444; padding: 8px; text-align: center; }}
             th {{ background-color: #222; }}
             img {{ border-radius: 4px; box-shadow: 0 0 5px rgba(255,255,255,0.1); }}
+            .config-row {{ background: #1a1a1a; }}
+            .config-row td {{ padding: 12px; text-align: left; font-size: 14px; }}
+            tr:hover {{ background-color: #222; cursor: pointer; }}
         </style>
+        <script>
+            function toggle(row) {{
+                let next = row.nextElementSibling;
+                let block = next.querySelector(".details");
+                block.style.display = block.style.display === "none" ? "block" : "none";
+            }}
+        </script>
     </head>
     <body>
         <h1>AI Emotions Simulator — Training Dashboard</h1>
-        <p>Versioned model summaries with visualisation of rewards, actions, and features.</p>
+        <p>Click a row to expand model config.</p>
         <table>
             <tr>
                 <th>Version</th>
@@ -210,7 +237,7 @@ def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dash
                 <th>Trained</th>
                 <th>Rewards</th>
                 <th>Actions</th>
-                <th>Feature Importance</th>
+                <th>Features</th>
             </tr>
             {''.join(rows)}
         </table>
@@ -224,7 +251,4 @@ def generate_dashboard(models_dir="models", plots_dir="plots", output_file="dash
     with open(output_file, "w") as f:
         f.write(html)
 
-    print(f"📊 Dashboard generated at: {output_file}")
-
-# Run dashboard update
-generate_dashboard()
+    print(f"📊 Dashboard updated at: {output_file}")
